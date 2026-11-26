@@ -1,0 +1,3073 @@
+{
+  "meta": {
+    "project": "demo-order",
+    "version": 1,
+    "generator": "codegraph@2.0",
+    "generatedAt": "2026-10-17T12:00:00+08:00",
+    "updatedAt": "2026-10-18T12:00:00+08:00"
+  },
+  "models": {
+    "CreateOrderCmd": {
+      "stereo": {
+        "zh": "DTO · 命令对象",
+        "en": "DTO · command object"
+      },
+      "path": "com.demo.order.api.dto",
+      "desc": {
+        "zh": "下单请求的命令对象，由请求体反序列化而来。",
+        "en": "Command object for placing an order, deserialized from the request body."
+      },
+      "fields": [
+        [
+          "userId",
+          "Long",
+          {
+            "zh": "下单用户",
+            "en": "Placing user"
+          }
+        ],
+        [
+          "sku",
+          "String",
+          {
+            "zh": "商品 SKU 编码",
+            "en": "Product SKU code"
+          }
+        ],
+        [
+          "quantity",
+          "Integer",
+          {
+            "zh": "购买数量",
+            "en": "Quantity"
+          }
+        ],
+        [
+          "couponId",
+          "String",
+          {
+            "zh": "优惠券编号（可空）",
+            "en": "Coupon id (nullable)"
+          }
+        ]
+      ]
+    },
+    "OrderVO": {
+      "stereo": {
+        "zh": "VO · 视图对象",
+        "en": "VO · view object"
+      },
+      "path": "com.demo.order.api.dto",
+      "desc": {
+        "zh": "订单的对外视图，仅暴露展示所需字段。",
+        "en": "External view of an order, exposing only display fields."
+      },
+      "fields": [
+        [
+          "orderId",
+          "Long",
+          {
+            "zh": "订单号",
+            "en": "Order no."
+          }
+        ],
+        [
+          "status",
+          "String",
+          {
+            "zh": "订单状态（NEW / PAID / …）",
+            "en": "Order status (NEW / PAID / …)"
+          }
+        ],
+        [
+          "amount",
+          "BigDecimal",
+          {
+            "zh": "订单总金额",
+            "en": "Total amount"
+          }
+        ],
+        [
+          "createdAt",
+          "Instant",
+          {
+            "zh": "下单时间",
+            "en": "Created at"
+          }
+        ]
+      ]
+    },
+    "Order": {
+      "stereo": {
+        "zh": "PO · JPA 实体",
+        "en": "PO · JPA entity"
+      },
+      "path": "com.demo.order.domain",
+      "desc": {
+        "zh": "订单实体，映射 orders 表，含乐观锁版本。",
+        "en": "Order entity mapped to the orders table, with an optimistic-lock version."
+      },
+      "fields": [
+        [
+          "id",
+          "Long",
+          {
+            "zh": "主键",
+            "en": "Primary key"
+          }
+        ],
+        [
+          "userId",
+          "Long",
+          {
+            "zh": "所属用户",
+            "en": "Owning user"
+          }
+        ],
+        [
+          "status",
+          "String",
+          {
+            "zh": "状态机字段",
+            "en": "State-machine field"
+          }
+        ],
+        [
+          "amount",
+          "BigDecimal",
+          {
+            "zh": "订单金额",
+            "en": "Amount"
+          }
+        ],
+        [
+          "version",
+          "Integer",
+          {
+            "zh": "乐观锁版本",
+            "en": "Optimistic-lock version"
+          }
+        ]
+      ]
+    },
+    "PaymentCmd": {
+      "stereo": {
+        "zh": "DTO · 请求",
+        "en": "DTO · request"
+      },
+      "path": "com.demo.order.integration.dto",
+      "desc": {
+        "zh": "发往支付网关的扣款请求。",
+        "en": "Charge request sent to the payment gateway."
+      },
+      "fields": [
+        [
+          "orderId",
+          "Long",
+          {
+            "zh": "关联订单号",
+            "en": "Related order no."
+          }
+        ],
+        [
+          "amount",
+          "BigDecimal",
+          {
+            "zh": "扣款金额",
+            "en": "Charge amount"
+          }
+        ],
+        [
+          "channel",
+          "String",
+          {
+            "zh": "支付渠道",
+            "en": "Payment channel"
+          }
+        ]
+      ]
+    },
+    "PaymentResult": {
+      "stereo": {
+        "zh": "DTO · 响应",
+        "en": "DTO · response"
+      },
+      "path": "com.demo.order.integration.dto",
+      "desc": {
+        "zh": "支付网关返回的扣款结果。",
+        "en": "Charge result returned by the payment gateway."
+      },
+      "fields": [
+        [
+          "payId",
+          "String",
+          {
+            "zh": "支付流水号",
+            "en": "Payment no."
+          }
+        ],
+        [
+          "success",
+          "boolean",
+          {
+            "zh": "是否成功",
+            "en": "Success"
+          }
+        ],
+        [
+          "message",
+          "String",
+          {
+            "zh": "失败原因（可空）",
+            "en": "Failure reason (nullable)"
+          }
+        ]
+      ]
+    },
+    "OrderQuery": {
+      "stereo": {
+        "zh": "DTO · 查询条件",
+        "en": "DTO · query criteria"
+      },
+      "path": "com.demo.order.api.dto",
+      "desc": {
+        "zh": "订单检索的条件对象。",
+        "en": "Criteria object for order search."
+      },
+      "fields": [
+        [
+          "status",
+          "String",
+          {
+            "zh": "状态过滤",
+            "en": "Status filter"
+          }
+        ],
+        [
+          "userId",
+          "Long",
+          {
+            "zh": "用户过滤",
+            "en": "User filter"
+          }
+        ],
+        [
+          "dateFrom",
+          "Instant",
+          {
+            "zh": "起始时间",
+            "en": "From"
+          }
+        ],
+        [
+          "dateTo",
+          "Instant",
+          {
+            "zh": "截止时间",
+            "en": "To"
+          }
+        ]
+      ]
+    },
+    "OrderCreatedEvent": {
+      "stereo": {
+        "zh": "事件 · 领域事件",
+        "en": "Event · domain event"
+      },
+      "path": "com.demo.order.domain.event",
+      "desc": {
+        "zh": "订单创建完成后的领域事件。",
+        "en": "Domain event fired after an order is created."
+      },
+      "fields": [
+        [
+          "orderId",
+          "Long",
+          {
+            "zh": "订单号",
+            "en": "Order no."
+          }
+        ],
+        [
+          "occurredAt",
+          "Instant",
+          {
+            "zh": "事件发生时间",
+            "en": "Occurred at"
+          }
+        ]
+      ]
+    },
+    "OrderDoc": {
+      "stereo": "PO · ES @Document",
+      "path": "com.demo.order.search.doc",
+      "desc": {
+        "zh": "订单搜索文档，映射 orders 索引；由订单事件异步写入。",
+        "en": "Order search document mapped to the orders index; written asynchronously from order events."
+      },
+      "fields": [
+        [
+          "id",
+          "Long",
+          {
+            "zh": "订单号（索引 _id）",
+            "en": "Order no. (index _id)"
+          }
+        ],
+        [
+          "userId",
+          "Long",
+          {
+            "zh": "所属用户",
+            "en": "Owning user"
+          }
+        ],
+        [
+          "status",
+          "String",
+          {
+            "zh": "状态机当前值",
+            "en": "Current state-machine value"
+          }
+        ],
+        [
+          "amount",
+          "BigDecimal",
+          {
+            "zh": "订单金额",
+            "en": "Amount"
+          }
+        ],
+        [
+          "keyword",
+          "String",
+          {
+            "zh": "商品/收货人冗余检索字段",
+            "en": "Denormalized keyword field for product/recipient"
+          }
+        ]
+      ]
+    }
+  },
+  "nodes": [
+    {
+      "id": "client",
+      "type": "client",
+      "title": "mobile-app",
+      "tagline": {
+        "zh": "客户端 · 用户侧",
+        "en": "Client app · user side"
+      },
+      "path": "apps/mobile · React Native",
+      "desc": {
+        "zh": "面向 C 端用户的移动客户端：下单、查单并实时追踪订单状态。",
+        "en": "Mobile client for consumers: place orders, query orders and track status in real time."
+      },
+      "tags": [
+        "React Native",
+        {
+          "zh": "C 端",
+          "en": "Consumer"
+        }
+      ],
+      "x": 40,
+      "y": 80,
+      "w": 270,
+      "sections": [
+        {
+          "label": {
+            "zh": "交互 · 2",
+            "en": "Interactions · 2"
+          },
+          "items": [
+            {
+              "kind": "kv",
+              "k": {
+                "zh": "下单 / 查单",
+                "en": "Place / query order"
+              },
+              "v": "REST API",
+              "desc": null,
+              "tag": null
+            },
+            {
+              "kind": "kv",
+              "k": {
+                "zh": "订单实时追踪",
+                "en": "Realtime order tracking"
+              },
+              "v": {
+                "zh": "WS 订阅",
+                "en": "WS subscribe"
+              },
+              "desc": null,
+              "tag": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "admin",
+      "type": "admin",
+      "title": "admin-console",
+      "tagline": {
+        "zh": "管理端 · 运营侧",
+        "en": "Admin console · operations"
+      },
+      "path": "apps/admin · Vue 3",
+      "desc": {
+        "zh": "运营管理台：订单检索、退款操作与经营数据看板。",
+        "en": "Operations console: order search, refunds and business dashboards."
+      },
+      "tags": [
+        "Vue 3",
+        {
+          "zh": "运营",
+          "en": "Ops"
+        }
+      ],
+      "x": 40,
+      "y": 320,
+      "w": 270,
+      "sections": [
+        {
+          "label": {
+            "zh": "交互 · 2",
+            "en": "Interactions · 2"
+          },
+          "items": [
+            {
+              "kind": "kv",
+              "k": {
+                "zh": "订单管理",
+                "en": "Order management"
+              },
+              "v": "REST API",
+              "desc": null,
+              "tag": null
+            },
+            {
+              "kind": "kv",
+              "k": {
+                "zh": "经营看板",
+                "en": "Ops dashboard"
+              },
+              "v": {
+                "zh": "报表",
+                "en": "Reports"
+              },
+              "desc": null,
+              "tag": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "ctl",
+      "type": "class",
+      "title": "OrderController.java",
+      "tagline": {
+        "zh": "REST 控制器",
+        "en": "REST controller"
+      },
+      "path": "src/main/java/com/demo/order/api/OrderController.java",
+      "desc": {
+        "zh": "订单模块 REST 入口：接收下单与查询请求，委派 OrderService 处理并返回视图对象。",
+        "en": "REST entry point of the order module: accepts create/query requests, delegates to OrderService and returns view objects."
+      },
+      "tags": [
+        "controller",
+        "rest",
+        {
+          "zh": "订单模块",
+          "en": "Order module"
+        }
+      ],
+      "x": 390,
+      "y": 160,
+      "w": 270,
+      "sections": [
+        {
+          "label": {
+            "zh": "方法 · 3",
+            "en": "Methods · 3"
+          },
+          "items": [
+            {
+              "kind": "method",
+              "name": "createOrder",
+              "sig": "+ createOrder(CreateOrderCmd cmd, BindingResult binding) : OrderVO",
+              "tag": "POST /orders",
+              "desc": {
+                "zh": "提交订单：校验命令对象后创建订单，返回订单视图。",
+                "en": "Submit an order: validates the command object, creates the order and returns the view."
+              },
+              "ret": {
+                "label": "OrderVO",
+                "model": "OrderVO"
+              },
+              "outs": [
+                {
+                  "args": [
+                    {
+                      "label": "CreateOrderCmd cmd",
+                      "model": "CreateOrderCmd"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "kind": "method",
+              "name": "getOrder",
+              "sig": "+ getOrder(Long id) : OrderVO",
+              "tag": "GET /orders/{id}",
+              "desc": {
+                "zh": "查询单个订单详情，按订单号加载。",
+                "en": "Load a single order detail by order number."
+              },
+              "ret": {
+                "label": "OrderVO",
+                "model": "OrderVO"
+              },
+              "outs": [
+                {
+                  "args": [
+                    {
+                      "label": "Long id"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "kind": "method",
+              "name": "searchOrders",
+              "sig": "+ searchOrders(OrderQuery query) : Page<OrderVO>",
+              "tag": "GET /orders",
+              "desc": {
+                "zh": "按条件分页查询订单。",
+                "en": "Search orders by condition with pagination."
+              },
+              "ret": {
+                "label": "Page<OrderVO>",
+                "model": "OrderVO"
+              },
+              "outs": [
+                {
+                  "args": [
+                    {
+                      "label": "OrderQuery query",
+                      "model": "OrderQuery"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "svc",
+      "type": "interface",
+      "title": "OrderService.java",
+      "tagline": {
+        "zh": "业务契约",
+        "en": "Service contract"
+      },
+      "path": "src/main/java/com/demo/order/service/OrderService.java",
+      "desc": {
+        "zh": "订单领域业务契约：定义下单、检索与状态流转的对外接口。",
+        "en": "Order domain contract: public APIs for placing, searching and transitioning orders."
+      },
+      "tags": [
+        "service",
+        {
+          "zh": "契约",
+          "en": "Contract"
+        }
+      ],
+      "x": 810,
+      "y": 40,
+      "w": 270,
+      "sections": [
+        {
+          "label": {
+            "zh": "方法 · 3",
+            "en": "Methods · 3"
+          },
+          "items": [
+            {
+              "kind": "method",
+              "name": "placeOrder",
+              "sig": "+ placeOrder(CreateOrderCmd cmd) : Order",
+              "desc": {
+                "zh": "创建并持久化订单，随后发起支付并广播订单事件。",
+                "en": "Creates and persists the order, then initiates payment and publishes the order event."
+              },
+              "ret": {
+                "label": "Order",
+                "model": "Order"
+              },
+              "tag": null
+            },
+            {
+              "kind": "method",
+              "name": "findById",
+              "sig": "+ findById(Long id) : Order",
+              "desc": {
+                "zh": "按主键加载订单。",
+                "en": "Load an order by primary key."
+              },
+              "ret": {
+                "label": "Order",
+                "model": "Order"
+              },
+              "tag": null
+            },
+            {
+              "kind": "method",
+              "name": "search",
+              "sig": "+ search(OrderQuery query) : Page<Order>",
+              "desc": {
+                "zh": "组合条件分页检索订单。",
+                "en": "Search orders by combined conditions with pagination."
+              },
+              "ret": {
+                "label": "Page<Order>",
+                "model": "Order"
+              },
+              "tag": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "impl",
+      "type": "class",
+      "title": "OrderServiceImpl.java",
+      "tagline": {
+        "zh": "业务实现",
+        "en": "Service implementation"
+      },
+      "path": "src/main/java/com/demo/order/service/impl/OrderServiceImpl.java",
+      "desc": {
+        "zh": "OrderService 默认实现：编排仓储、支付与事件推送；写路径带事务与幂等保护。",
+        "en": "Default OrderService implementation: orchestrates repository, payment and event publishing; the write path is guarded by transactions and idempotency."
+      },
+      "tags": [
+        "@Service",
+        {
+          "zh": "事务",
+          "en": "Transactional"
+        },
+        {
+          "zh": "订单",
+          "en": "Order"
+        }
+      ],
+      "x": 800,
+      "y": 340,
+      "w": 270,
+      "sections": [
+        {
+          "label": {
+            "zh": "字段 · 5",
+            "en": "Fields · 5"
+          },
+          "items": [
+            {
+              "kind": "field",
+              "name": "orderRepository",
+              "t": "OrderRepository",
+              "desc": null,
+              "tag": null
+            },
+            {
+              "kind": "field",
+              "name": "paymentClient",
+              "t": "PaymentClient",
+              "desc": null,
+              "tag": null
+            },
+            {
+              "kind": "field",
+              "name": "wsHandler",
+              "t": "OrderWebSocketHandler",
+              "desc": null,
+              "tag": null
+            },
+            {
+              "kind": "field",
+              "name": "queryMapper",
+              "t": "OrderQueryMapper",
+              "desc": null,
+              "tag": null
+            },
+            {
+              "kind": "field",
+              "name": "converter",
+              "t": "OrderConverter",
+              "desc": null,
+              "tag": null
+            }
+          ]
+        },
+        {
+          "label": {
+            "zh": "方法 · 3",
+            "en": "Methods · 3"
+          },
+          "items": [
+            {
+              "kind": "method",
+              "name": "placeOrder",
+              "sig": "+ placeOrder(CreateOrderCmd cmd) : Order",
+              "tag": "@Transactional",
+              "desc": {
+                "zh": "校验并落库新订单，随后发起支付扣款（携带幂等键）并广播订单创建事件。",
+                "en": "Validates and persists the new order, then charges payment (with an idempotency key) and broadcasts the OrderCreated event."
+              },
+              "ret": {
+                "label": "Order",
+                "model": "Order"
+              },
+              "outs": [
+                {
+                  "args": [
+                    {
+                      "label": "Order order",
+                      "model": "Order"
+                    }
+                  ]
+                },
+                {
+                  "args": [
+                    {
+                      "label": "PaymentCmd payment",
+                      "model": "PaymentCmd"
+                    },
+                    {
+                      "label": "String idempotencyKey"
+                    }
+                  ]
+                },
+                {
+                  "args": [
+                    {
+                      "label": "OrderCreatedEvent event",
+                      "model": "OrderCreatedEvent"
+                    }
+                  ]
+                },
+                {
+                  "args": [
+                    {
+                      "label": "String key · stock:lock:{sku}"
+                    },
+                    {
+                      "label": "int waitSeconds"
+                    }
+                  ]
+                },
+                {
+                  "args": [
+                    {
+                      "label": "String topic · order-events"
+                    },
+                    {
+                      "label": "OrderCreatedEvent event",
+                      "model": "OrderCreatedEvent"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "kind": "method",
+              "name": "findById",
+              "sig": "+ findById(Long id) : OrderVO",
+              "desc": {
+                "zh": "查订单详情：先读 Redis 缓存，未命中回源 JPA；对账场景走 MyBatis-Plus 直查主库。",
+                "en": "Order detail: reads the Redis cache first, falls back to JPA; reconciliation paths query the primary DB via MyBatis-Plus."
+              },
+              "ret": {
+                "label": "OrderVO",
+                "model": "OrderVO"
+              },
+              "outs": [
+                {
+                  "args": [
+                    {
+                      "label": "Long id"
+                    }
+                  ]
+                },
+                {
+                  "args": [
+                    {
+                      "label": "Order order",
+                      "model": "Order"
+                    }
+                  ]
+                },
+                {
+                  "args": [
+                    {
+                      "label": "String key · order:detail:{id}"
+                    }
+                  ]
+                },
+                {
+                  "args": [
+                    {
+                      "label": "Long id"
+                    }
+                  ]
+                }
+              ],
+              "tag": null
+            },
+            {
+              "kind": "method",
+              "name": "search",
+              "sig": "+ search(OrderQuery query, int limit) : Page<OrderVO>",
+              "desc": {
+                "zh": "订单检索：组合条件走 XML 动态 SQL，运营分页列表走 MyBatis-Plus Wrapper。",
+                "en": "Order search: combined conditions go through XML dynamic SQL; the paged operations list goes through a MyBatis-Plus Wrapper."
+              },
+              "ret": {
+                "label": "Page<OrderVO>",
+                "model": "OrderVO"
+              },
+              "outs": [
+                {
+                  "args": [
+                    {
+                      "label": "OrderQuery query",
+                      "model": "OrderQuery"
+                    },
+                    {
+                      "label": "int limit"
+                    }
+                  ]
+                },
+                {
+                  "args": [
+                    {
+                      "label": "LocalDate date"
+                    }
+                  ]
+                },
+                {
+                  "args": [
+                    {
+                      "label": "int status"
+                    },
+                    {
+                      "label": "long page"
+                    },
+                    {
+                      "label": "long size"
+                    }
+                  ]
+                }
+              ],
+              "tag": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "aspect",
+      "type": "class",
+      "title": "OrderAuditAspect.java",
+      "tagline": {
+        "zh": "审计切面 · @Aspect",
+        "en": "Auditing aspect · @Aspect"
+      },
+      "path": "src/main/java/com/demo/order/aop/OrderAuditAspect.java",
+      "desc": {
+        "zh": "订单链路的横切关注点：方法级审计日志与仓储写入指标，按切点织入业务流程（不改动业务代码）。",
+        "en": "Cross-cutting concerns of the order flow: method-level audit logging and repository write metrics, woven in by pointcuts without touching business code."
+      },
+      "tags": [
+        "AOP",
+        "@Aspect",
+        {
+          "zh": "审计",
+          "en": "Auditing"
+        }
+      ],
+      "x": 810,
+      "y": 980,
+      "w": 270,
+      "sections": [
+        {
+          "label": {
+            "zh": "织入点 · 2",
+            "en": "Pointcuts · 2"
+          },
+          "items": [
+            {
+              "kind": "method",
+              "name": "auditAround",
+              "tag": "@Around",
+              "sig": "@Around(\"execution(* com.demo.order.service..*.*(..))\")",
+              "desc": {
+                "zh": "环绕业务层全部公开方法：记录入参、出参与耗时，写入审计日志。",
+                "en": "Around all public service methods: logs arguments, results and duration to the audit log."
+              }
+            },
+            {
+              "kind": "method",
+              "name": "metricsAfterReturn",
+              "tag": "@AfterReturning",
+              "sig": "@AfterReturning(\"execution(* com.demo.order.repo..save(..))\")",
+              "desc": {
+                "zh": "仓储保存成功后采集订单写入指标。",
+                "en": "Collects order write metrics after a successful repository save."
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "converter",
+      "type": "class",
+      "title": "OrderConverter.java",
+      "tagline": {
+        "zh": "对象转换",
+        "en": "Object conversion"
+      },
+      "path": "src/main/java/com/demo/order/mapper/OrderConverter.java",
+      "desc": {
+        "zh": "领域对象与视图对象的转换器（MapStruct 生成实现）。",
+        "en": "Converter between domain and view objects (MapStruct-generated implementation)."
+      },
+      "tags": [
+        "converter",
+        "mapstruct"
+      ],
+      "x": 1250,
+      "y": 40,
+      "w": 270,
+      "sections": [
+        {
+          "label": {
+            "zh": "方法 · 1",
+            "en": "Methods · 1"
+          },
+          "items": [
+            {
+              "kind": "method",
+              "name": "toVO",
+              "sig": "+ toVO(Order order) : OrderVO",
+              "desc": {
+                "zh": "将订单实体转换为对外视图，隐藏审计与乐观锁字段。",
+                "en": "Converts the order entity to the external view, hiding audit and optimistic-lock fields."
+              },
+              "ret": {
+                "label": "OrderVO",
+                "model": "OrderVO"
+              },
+              "tag": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "repo",
+      "type": "interface",
+      "title": "OrderRepository.java",
+      "tagline": {
+        "zh": "JPA 仓储",
+        "en": "JPA repository"
+      },
+      "path": "src/main/java/com/demo/order/repo/OrderRepository.java",
+      "desc": {
+        "zh": "订单实体的 Spring Data 仓储：派生查询与持久化。",
+        "en": "Spring Data repository for the Order entity: derived queries and persistence."
+      },
+      "tags": [
+        "persistence",
+        "spring-data-jpa"
+      ],
+      "x": 1260,
+      "y": 310,
+      "w": 270,
+      "sections": [
+        {
+          "label": {
+            "zh": "方法 · 2",
+            "en": "Methods · 2"
+          },
+          "items": [
+            {
+              "kind": "method",
+              "name": "save",
+              "sig": "+ save(Order entity) : Order",
+              "desc": {
+                "zh": "新增或合并保存订单实体。",
+                "en": "Inserts or merges the order entity."
+              },
+              "ret": {
+                "label": "Order",
+                "model": "Order"
+              },
+              "tag": null
+            },
+            {
+              "kind": "method",
+              "name": "findById",
+              "sig": "+ findById(Long id) : Optional<Order>",
+              "desc": {
+                "zh": "按主键查找订单。",
+                "en": "Find an order by primary key."
+              },
+              "ret": {
+                "label": "Optional<Order>",
+                "model": "Order"
+              },
+              "tag": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "qmapper",
+      "type": "interface",
+      "title": "OrderQueryMapper.java",
+      "tagline": {
+        "zh": "MyBatis 接口",
+        "en": "MyBatis mapper interface"
+      },
+      "path": "src/main/java/com/demo/order/repo/OrderQueryMapper.java",
+      "desc": {
+        "zh": "订单复杂查询的 MyBatis 接口：语句实现在同名 XML 映射文件中（见「绑定」连线）。",
+        "en": "MyBatis mapper interface for complex order queries: statements live in the XML mapping file with the same name (see the bind edge)."
+      },
+      "tags": [
+        "mybatis",
+        "sql"
+      ],
+      "x": 1260,
+      "y": 570,
+      "w": 270,
+      "sections": [
+        {
+          "label": {
+            "zh": "方法 · 2",
+            "en": "Methods · 2"
+          },
+          "items": [
+            {
+              "kind": "method",
+              "name": "selectByCondition",
+              "sig": "+ selectByCondition(OrderQuery q, int limit) : List<Order>",
+              "desc": {
+                "zh": "按组合条件检索订单，SQL 见 XML 映射文件。",
+                "en": "Searches orders by combined conditions; SQL lives in the XML mapping file."
+              },
+              "tag": null
+            },
+            {
+              "kind": "method",
+              "name": "countTodayOrders",
+              "sig": "+ countTodayOrders(LocalDate date) : long",
+              "desc": {
+                "zh": "统计当日订单量，SQL 见 XML 映射文件。",
+                "en": "Counts today's orders; SQL lives in the XML mapping file."
+              },
+              "tag": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "xml",
+      "type": "xml",
+      "title": "OrderQueryMapper.xml",
+      "tagline": {
+        "zh": "MyBatis SQL 映射",
+        "en": "MyBatis SQL mapping"
+      },
+      "path": "src/main/resources/mappers/OrderQueryMapper.xml",
+      "desc": {
+        "zh": "与 OrderQueryMapper 接口同命名空间绑定的 SQL 映射文件：点击右侧 SQL 查看完整拼接语句。",
+        "en": "SQL mapping file bound to the OrderQueryMapper interface namespace: click SQL on the right to see the fully assembled statement."
+      },
+      "tags": [
+        "mybatis",
+        "sql",
+        "xml"
+      ],
+      "x": 1260,
+      "y": 920,
+      "w": 270,
+      "sections": [
+        {
+          "label": {
+            "zh": "SQL 语句 · 2",
+            "en": "SQL statements · 2"
+          },
+          "items": [
+            {
+              "kind": "sql",
+              "name": "selectByCondition",
+              "tag": "<select>",
+              "sqltag": true,
+              "sig": "<select id=\"selectByCondition\" parameterType=\"map\" resultType=\"Order\">",
+              "desc": {
+                "zh": "动态 SQL：按状态 / 时间 / 用户组合条件检索订单并 LIMIT 限流（全部条件拼接后的完整形态）。",
+                "en": "Dynamic SQL: searches orders by status / time / user conditions with a LIMIT (full form with every condition applied)."
+              },
+              "ret": {
+                "label": "List<Order>",
+                "model": "Order"
+              },
+              "params": [
+                {
+                  "label": "OrderQuery query",
+                  "model": "OrderQuery"
+                },
+                {
+                  "label": "int limit"
+                }
+              ],
+              "sql": "SELECT id, user_id, status, amount, version\n  FROM orders\n WHERE status = ?\n   AND user_id = ?\n   AND created_at BETWEEN ? AND ?\n ORDER BY created_at DESC\n LIMIT ?"
+            },
+            {
+              "kind": "sql",
+              "name": "countTodayOrders",
+              "tag": "<select>",
+              "sqltag": true,
+              "sig": "<select id=\"countTodayOrders\" parameterType=\"date\" resultType=\"long\">",
+              "desc": {
+                "zh": "聚合统计当日订单量。",
+                "en": "Aggregated count of today's orders."
+              },
+              "ret": {
+                "label": "long"
+              },
+              "params": [
+                {
+                  "label": "LocalDate date"
+                }
+              ],
+              "sql": "SELECT COUNT(*)\n  FROM orders\n WHERE created_at >= ?\n   AND created_at < ?"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "mpmapper",
+      "type": "interface",
+      "title": "OrderMpMapper.java",
+      "tagline": {
+        "zh": "MyBatis-Plus 接口 · 内置 CRUD",
+        "en": "MyBatis-Plus mapper · built-in CRUD"
+      },
+      "path": "src/main/java/com/demo/order/repo/OrderMpMapper.java",
+      "desc": {
+        "zh": "继承 BaseMapper<Order> 的 MyBatis-Plus 接口：SQL 由实体注解与 Wrapper 在接口内直接生成，不走 XML；点击行上「SQL」查看实际执行的完整语句。",
+        "en": "MyBatis-Plus interface extending BaseMapper<Order>: SQL is generated inline from entity annotations and Wrappers, no XML; click SQL on the row to see what is actually executed."
+      },
+      "tags": [
+        "mybatis-plus",
+        "BaseMapper",
+        "sql"
+      ],
+      "x": 1260,
+      "y": 1240,
+      "w": 270,
+      "sections": [
+        {
+          "label": {
+            "zh": "方法 · 2",
+            "en": "Methods · 2"
+          },
+          "items": [
+            {
+              "kind": "method",
+              "name": "selectById",
+              "sig": "+ selectById(Serializable id) : Order",
+              "tag": "BaseMapper",
+              "desc": {
+                "zh": "MyBatis-Plus 按主键查订单：列名取 @TableField 映射，逻辑删除追加 deleted = 0。",
+                "en": "MyBatis-Plus primary-key lookup on orders: columns come from @TableField mapping; logical delete appends deleted = 0."
+              },
+              "ret": {
+                "label": "Order",
+                "model": "Order"
+              },
+              "params": [
+                {
+                  "label": "Long id"
+                }
+              ],
+              "sql": "SELECT id, user_id, status, amount, version\n  FROM orders\n WHERE id = ?\n   AND deleted = 0"
+            },
+            {
+              "kind": "method",
+              "name": "selectPage",
+              "sig": "+ selectPage(IPage<Order> page, LambdaQueryWrapper<Order> w) : IPage<Order>",
+              "tag": "LambdaQueryWrapper",
+              "desc": {
+                "zh": "MyBatis-Plus 分页检索：Wrapper 链式条件按全部命中展开，分页插件追加 LIMIT。",
+                "en": "MyBatis-Plus paged search: Wrapper chain expanded with all conditions hit; the pagination plugin appends LIMIT."
+              },
+              "ret": {
+                "label": "IPage<Order>",
+                "model": "Order"
+              },
+              "params": [
+                {
+                  "label": "int status"
+                },
+                {
+                  "label": "long page"
+                },
+                {
+                  "label": "long size"
+                }
+              ],
+              "sql": "SELECT id, user_id, status, amount, version\n  FROM orders\n WHERE status = ?\n   AND deleted = 0\n ORDER BY created_at DESC\n LIMIT ?, ?"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "wsHandler",
+      "type": "class",
+      "title": "OrderWebSocketHandler.java",
+      "tagline": {
+        "zh": "实时推送",
+        "en": "Realtime push"
+      },
+      "path": "src/main/java/com/demo/order/ws/OrderWebSocketHandler.java",
+      "desc": {
+        "zh": "维护 /topic/orders 的 WebSocket 会话，把订单状态变化实时推送给前端。",
+        "en": "Maintains WebSocket sessions on /topic/orders and pushes order status changes to the frontend in real time."
+      },
+      "tags": [
+        "websocket",
+        "@ServerEndpoint",
+        {
+          "zh": "实时",
+          "en": "Realtime"
+        }
+      ],
+      "x": 1650,
+      "y": 60,
+      "w": 270,
+      "sections": [
+        {
+          "label": {
+            "zh": "方法 · 1",
+            "en": "Methods · 1"
+          },
+          "items": [
+            {
+              "kind": "method",
+              "name": "push",
+              "sig": "+ push(OrderCreatedEvent event) : void",
+              "desc": {
+                "zh": "向订阅 /topic/orders 的在线会话广播订单事件。",
+                "en": "Broadcasts order events to online sessions subscribed to /topic/orders."
+              },
+              "ret": {
+                "label": "（无返回值）"
+              },
+              "tag": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "payment",
+      "type": "class",
+      "title": "PaymentClient.java",
+      "tagline": {
+        "zh": "支付网关客户端",
+        "en": "Payment gateway client"
+      },
+      "path": "src/main/java/com/demo/order/integration/PaymentClient.java",
+      "desc": {
+        "zh": "封装支付服务的 HTTP 访问：超时控制、重试与熔断。",
+        "en": "HTTP access to the payment service: timeout control, retries and circuit breaking."
+      },
+      "tags": [
+        "http",
+        "resilience4j",
+        {
+          "zh": "支付",
+          "en": "Payment"
+        }
+      ],
+      "x": 1650,
+      "y": 300,
+      "w": 270,
+      "sections": [
+        {
+          "label": {
+            "zh": "字段 · 2",
+            "en": "Fields · 2"
+          },
+          "items": [
+            {
+              "kind": "field",
+              "name": "restClient",
+              "t": "RestClient",
+              "desc": null,
+              "tag": null
+            },
+            {
+              "kind": "field",
+              "name": "props",
+              "t": "PaymentProperties",
+              "desc": null,
+              "tag": null
+            }
+          ]
+        },
+        {
+          "label": {
+            "zh": "方法 · 1",
+            "en": "Methods · 1"
+          },
+          "items": [
+            {
+              "kind": "method",
+              "name": "charge",
+              "sig": "+ charge(PaymentCmd cmd, String idempotencyKey) : PaymentResult",
+              "desc": {
+                "zh": "发起扣款请求：超时 3s，失败自动重试 2 次，幂等键防重复扣款。",
+                "en": "Sends the charge request: 3s timeout, 2 automatic retries, idempotency key prevents double charges."
+              },
+              "ret": {
+                "label": "PaymentResult",
+                "model": "PaymentResult"
+              },
+              "tag": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "ymlDs",
+      "type": "config",
+      "title": "application.yml",
+      "tagline": {
+        "zh": "配置片段 · spring.datasource",
+        "en": "Config fragment · spring.datasource"
+      },
+      "path": "src/main/resources/application.yml#spring.datasource",
+      "desc": {
+        "zh": "数据源连接配置（节选自 application.yml）。",
+        "en": "Datasource connection settings (excerpt from application.yml)."
+      },
+      "tags": [
+        "spring",
+        "datasource"
+      ],
+      "x": 40,
+      "y": 560,
+      "w": 270,
+      "sections": [
+        {
+          "label": {
+            "zh": "配置项 · 3",
+            "en": "Settings · 3"
+          },
+          "items": [
+            {
+              "kind": "kv",
+              "k": "spring.datasource.url",
+              "v": "jdbc:mysql://order-db:3306/…",
+              "desc": null,
+              "tag": null
+            },
+            {
+              "kind": "kv",
+              "k": "spring.datasource.username",
+              "v": "order_app",
+              "desc": null,
+              "tag": null
+            },
+            {
+              "kind": "kv",
+              "k": "spring.datasource.hikari.max-pool-size",
+              "v": "20",
+              "desc": null,
+              "tag": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "ymlPay",
+      "type": "config",
+      "title": "application.yml",
+      "tagline": {
+        "zh": "配置片段 · app.payment",
+        "en": "Config fragment · app.payment"
+      },
+      "path": "src/main/resources/application.yml#app.payment",
+      "desc": {
+        "zh": "支付客户端的自定义配置段（节选自 application.yml）。",
+        "en": "Custom configuration for the payment client (excerpt from application.yml)."
+      },
+      "tags": [
+        {
+          "zh": "自定义配置",
+          "en": "Custom config"
+        },
+        {
+          "zh": "支付",
+          "en": "Payment"
+        }
+      ],
+      "x": 1650,
+      "y": 620,
+      "w": 270,
+      "sections": [
+        {
+          "label": {
+            "zh": "配置项 · 3",
+            "en": "Settings · 3"
+          },
+          "items": [
+            {
+              "kind": "kv",
+              "k": "app.payment.base-url",
+              "v": "https://pay.internal",
+              "desc": null,
+              "tag": null
+            },
+            {
+              "kind": "kv",
+              "k": "app.payment.timeout",
+              "v": "3s",
+              "desc": null,
+              "tag": null
+            },
+            {
+              "kind": "kv",
+              "k": "app.payment.retry-times",
+              "v": "2",
+              "desc": null,
+              "tag": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "db",
+      "type": "database",
+      "title": "MySQL · demo_order",
+      "tagline": {
+        "zh": "订单库",
+        "en": "Order database"
+      },
+      "path": "jdbc:mysql://order-db:3306/demo_order",
+      "desc": {
+        "zh": "订单库：orders 表由 JPA 实体映射生成，统计查询走手写 SQL。",
+        "en": "Order database: the orders table is generated from the JPA entity mapping; statistics queries use hand-written SQL."
+      },
+      "tags": [
+        "mysql",
+        {
+          "zh": "生产",
+          "en": "Production"
+        }
+      ],
+      "x": 2030,
+      "y": 290,
+      "w": 270,
+      "sections": [
+        {
+          "label": {
+            "zh": "表 orders · 5 列",
+            "en": "Table orders · 5 cols"
+          },
+          "items": [
+            {
+              "kind": "kv",
+              "k": "id",
+              "v": "BIGINT · PK",
+              "desc": null,
+              "tag": null
+            },
+            {
+              "kind": "kv",
+              "k": "user_id",
+              "v": "BIGINT",
+              "desc": null,
+              "tag": null
+            },
+            {
+              "kind": "kv",
+              "k": "status",
+              "v": {
+                "zh": "VARCHAR(20) · 状态机",
+                "en": "VARCHAR(20) · state machine"
+              },
+              "desc": null,
+              "tag": null
+            },
+            {
+              "kind": "kv",
+              "k": "amount",
+              "v": "DECIMAL(10,2)",
+              "desc": null,
+              "tag": null
+            },
+            {
+              "kind": "kv",
+              "k": "version",
+              "v": {
+                "zh": "INT · 乐观锁",
+                "en": "INT · optimistic lock"
+              },
+              "desc": null,
+              "tag": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "paySvc",
+      "type": "external",
+      "title": "payment-svc",
+      "tagline": {
+        "zh": "支付服务 · 内部集群",
+        "en": "Payment service · internal cluster"
+      },
+      "path": "https://pay.internal/v1",
+      "desc": {
+        "zh": "内部支付微服务：负责扣款、退款与对账。",
+        "en": "Internal payment microservice: charges, refunds and reconciliation."
+      },
+      "tags": [
+        "http",
+        {
+          "zh": "微服务",
+          "en": "Microservice"
+        }
+      ],
+      "x": 2030,
+      "y": 650,
+      "w": 270,
+      "sections": [
+        {
+          "label": {
+            "zh": "端点 · 2",
+            "en": "Endpoints · 2"
+          },
+          "items": [
+            {
+              "kind": "kv",
+              "k": "POST /v1/charge",
+              "v": {
+                "zh": "扣款",
+                "en": "Charge"
+              },
+              "desc": null,
+              "tag": null
+            },
+            {
+              "kind": "kv",
+              "k": "POST /v1/refund",
+              "v": {
+                "zh": "退款",
+                "en": "Refund"
+              },
+              "desc": null,
+              "tag": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "wsStream",
+      "type": "external",
+      "title": {
+        "zh": "订单事件流",
+        "en": "Order Event Stream"
+      },
+      "tagline": {
+        "zh": "WS 通道",
+        "en": "WebSocket channel"
+      },
+      "path": "wss://gw.internal/topic/orders",
+      "desc": {
+        "zh": "前端订阅的订单事件主题，经 WS 网关广播。",
+        "en": "Order event topic subscribed to by the frontend, broadcast via the WS gateway."
+      },
+      "tags": [
+        "websocket",
+        "stomp"
+      ],
+      "x": 2030,
+      "y": 60,
+      "w": 270,
+      "sections": [
+        {
+          "label": {
+            "zh": "通道 · 2",
+            "en": "Channels · 2"
+          },
+          "items": [
+            {
+              "kind": "kv",
+              "k": "/topic/orders",
+              "v": {
+                "zh": "订单事件",
+                "en": "Order events"
+              },
+              "desc": null,
+              "tag": null
+            },
+            {
+              "kind": "kv",
+              "k": "STOMP",
+              "v": {
+                "zh": "子协议",
+                "en": "Subprotocol"
+              },
+              "desc": null,
+              "tag": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "redis",
+      "type": "cache",
+      "title": "Redis · db0",
+      "tagline": {
+        "zh": "缓存与分布式锁",
+        "en": "Cache & distributed locks"
+      },
+      "path": "redis://redis.demo.local:6379/0",
+      "desc": {
+        "zh": "订单详情缓存与秒杀库存锁；命中缓存可跳过一次 DB 查询。",
+        "en": "Order detail cache and flash-sale stock locks; a cache hit skips one DB query."
+      },
+      "tags": [
+        "Redis",
+        "Lettuce",
+        {
+          "zh": "缓存",
+          "en": "Cache"
+        },
+        {
+          "zh": "分布式锁",
+          "en": "Distributed lock"
+        }
+      ],
+      "x": 2430,
+      "y": 60,
+      "w": 270,
+      "sections": [
+        {
+          "label": {
+            "zh": "Key 模式 · 3",
+            "en": "Key patterns · 3"
+          },
+          "items": [
+            {
+              "kind": "res",
+              "name": "order:detail:{id}",
+              "tag": "STRING · TTL 10m",
+              "sig": "GET / SETEX order:detail:{id} 600",
+              "ret": {
+                "label": "OrderVO",
+                "model": "OrderVO"
+              },
+              "desc": {
+                "zh": "订单详情缓存：未命中回源 DB 并以 10 分钟 TTL 写回。",
+                "en": "Order detail cache: on miss, falls back to the DB and writes back with a 10-minute TTL."
+              }
+            },
+            {
+              "kind": "res",
+              "name": "stock:lock:{sku}",
+              "tag": "LOCK · Redisson",
+              "sig": "RLock lock(client.getLock(\"stock:lock:\" + sku))",
+              "ret": {
+                "label": {
+                  "zh": "String · 锁 token",
+                  "en": "String · lock token"
+                }
+              },
+              "desc": {
+                "zh": "秒杀库存锁，看门狗续期，锁失败直接拒单。",
+                "en": "Flash-sale stock lock with watchdog renewal; failure rejects the order outright."
+              }
+            },
+            {
+              "kind": "res",
+              "name": "rank:order:today",
+              "tag": {
+                "zh": "ZSET · 排行",
+                "en": "ZSET · ranking"
+              },
+              "sig": "ZINCRBY rank:order:today 1 sku",
+              "ret": {
+                "label": "Long · score"
+              },
+              "desc": {
+                "zh": "当日销量排行，供管理端热销榜。",
+                "en": "Today's sales ranking for the admin best-seller board."
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "kafka",
+      "type": "mq",
+      "title": "Kafka · prod-cluster",
+      "tagline": {
+        "zh": "订单事件总线",
+        "en": "Order event bus"
+      },
+      "path": "kafka://kafka.demo.local:9092",
+      "desc": {
+        "zh": "承载订单域事件的生产与消费，消费失败重试 3 次后进入死信队列。",
+        "en": "Carries production and consumption of order domain events; failed messages retry 3 times then land in the dead-letter topic."
+      },
+      "tags": [
+        "Kafka",
+        {
+          "zh": "事件驱动",
+          "en": "Event-driven"
+        },
+        {
+          "zh": "异步",
+          "en": "Async"
+        }
+      ],
+      "x": 2430,
+      "y": 440,
+      "w": 270,
+      "sections": [
+        {
+          "label": "Topic · 3",
+          "items": [
+            {
+              "kind": "res",
+              "name": "order-events",
+              "tag": {
+                "zh": "Topic · 3 分区",
+                "en": "Topic · 3 partitions"
+              },
+              "sig": "kafkaTemplate.send(\"order-events\", event)",
+              "ret": {
+                "label": "OrderCreatedEvent",
+                "model": "OrderCreatedEvent"
+              },
+              "desc": {
+                "zh": "订单创建事件；消费组 order-svc。",
+                "en": "OrderCreatedEvent; consumer group order-svc."
+              }
+            },
+            {
+              "kind": "res",
+              "name": "order-events-dlq",
+              "tag": {
+                "zh": "Topic · 死信",
+                "en": "Topic · DLQ"
+              },
+              "sig": {
+                "zh": "retry 3 次失败后投递",
+                "en": "delivered after 3 failed retries"
+              },
+              "ret": {
+                "label": "OrderCreatedEvent",
+                "model": "OrderCreatedEvent"
+              },
+              "desc": {
+                "zh": "死信队列，人工处理。",
+                "en": "Dead-letter topic for manual handling."
+              }
+            },
+            {
+              "kind": "res",
+              "name": "payment-events",
+              "tag": {
+                "zh": "Topic · 支付回调",
+                "en": "Topic · payment callbacks"
+              },
+              "sig": "kafkaTemplate.send(\"payment-events\", event)",
+              "ret": {
+                "label": "PaymentEvent"
+              },
+              "desc": {
+                "zh": "支付网关回调事件。",
+                "en": "Payment gateway callback events."
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "es",
+      "type": "search",
+      "title": "Elasticsearch · demo-es",
+      "tagline": {
+        "zh": "订单检索与日志索引",
+        "en": "Order search & log indices"
+      },
+      "path": "es://es.demo.local:9200",
+      "desc": {
+        "zh": "orders 业务索引供前台检索；order-audit 接收 Logstash 汇入的审计日志。",
+        "en": "The orders index serves frontend search; order-audit receives audit logs shipped by Logstash."
+      },
+      "tags": [
+        "Elasticsearch",
+        "ELK",
+        {
+          "zh": "检索",
+          "en": "Search"
+        }
+      ],
+      "x": 2430,
+      "y": 820,
+      "w": 270,
+      "sections": [
+        {
+          "label": "Index · 2",
+          "items": [
+            {
+              "kind": "res",
+              "name": "orders",
+              "tag": {
+                "zh": "Index · 5 分片",
+                "en": "Index · 5 shards"
+              },
+              "sig": "IndexRequest index=orders · id=orderId",
+              "ret": {
+                "label": "OrderDoc",
+                "model": "OrderDoc"
+              },
+              "desc": {
+                "zh": "订单检索索引，由事件监听异步写入。",
+                "en": "Order search index, written asynchronously by the event listener."
+              }
+            },
+            {
+              "kind": "res",
+              "name": "order-audit",
+              "tag": {
+                "zh": "Index · 日志 · 1 分片",
+                "en": "Index · logs · 1 shard"
+              },
+              "sig": "bulk index=order-audit · @timestamp",
+              "ret": {
+                "label": {
+                  "zh": "JSON 日志",
+                  "en": "JSON log entry"
+                }
+              },
+              "desc": {
+                "zh": "Logstash 汇入的应用审计日志。",
+                "en": "Application audit logs shipped in by Logstash."
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "oss",
+      "type": "cloud",
+      "title": "OSS · demo-bucket",
+      "tagline": {
+        "zh": "发票文件存储",
+        "en": "Invoice file storage"
+      },
+      "path": "oss://demo-bucket",
+      "desc": {
+        "zh": "存放电子发票 PDF 等业务文件；访问凭证已脱敏。",
+        "en": "Stores business files such as e-invoice PDFs; access credentials are masked."
+      },
+      "tags": [
+        {
+          "zh": "阿里云",
+          "en": "Alibaba Cloud"
+        },
+        "OSS",
+        {
+          "zh": "对象存储",
+          "en": "Object storage"
+        }
+      ],
+      "x": 3650,
+      "y": 440,
+      "w": 270,
+      "sections": [
+        {
+          "label": {
+            "zh": "资源配置 · 3",
+            "en": "Resources · 3"
+          },
+          "items": [
+            {
+              "kind": "kv",
+              "k": "endpoint",
+              "v": "oss-cn-hangzhou.aliyuncs.com",
+              "desc": null,
+              "tag": null
+            },
+            {
+              "kind": "kv",
+              "k": "bucket",
+              "v": {
+                "zh": "demo-bucket · 私有读",
+                "en": "demo-bucket · private read"
+              },
+              "desc": null,
+              "tag": null
+            },
+            {
+              "kind": "kv",
+              "k": "accessKeyId",
+              "v": {
+                "zh": "****（脱敏）",
+                "en": "**** (masked)"
+              },
+              "desc": null,
+              "tag": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "listener",
+      "type": "class",
+      "title": "OrderEventListener.java",
+      "tagline": {
+        "zh": "订单事件消费",
+        "en": "Order event consumer"
+      },
+      "path": "src/main/java/com/demo/order/mq/OrderEventListener.java",
+      "desc": {
+        "zh": "消费 order-events：写入搜索索引并触发电子发票生成。",
+        "en": "Consumes order-events: writes the search index and triggers e-invoice generation."
+      },
+      "tags": [
+        "@Component",
+        "@KafkaListener",
+        {
+          "zh": "消费者",
+          "en": "Consumer"
+        }
+      ],
+      "x": 2840,
+      "y": 440,
+      "w": 270,
+      "sections": [
+        {
+          "label": {
+            "zh": "方法 · 1",
+            "en": "Methods · 1"
+          },
+          "items": [
+            {
+              "kind": "method",
+              "name": "onMessage",
+              "sig": "+ onMessage(OrderCreatedEvent event) : void",
+              "tag": "@KafkaListener(topics = \"order-events\")",
+              "desc": {
+                "zh": "消费订单创建事件：写 ES 索引、生成发票上传 OSS，并转发通知交换机。",
+                "en": "Consumes OrderCreatedEvent: indexes into ES, generates the invoice to OSS, and forwards to the notification exchange."
+              },
+              "ret": {
+                "label": "（无返回值）"
+              },
+              "outs": [
+                {
+                  "args": [
+                    {
+                      "label": "OrderCreatedEvent event",
+                      "model": "OrderCreatedEvent"
+                    }
+                  ]
+                },
+                {
+                  "args": [
+                    {
+                      "label": "String rk · order.created"
+                    },
+                    {
+                      "label": "OrderCreatedEvent event",
+                      "model": "OrderCreatedEvent"
+                    }
+                  ]
+                },
+                {
+                  "args": [
+                    {
+                      "label": "OrderDoc doc",
+                      "model": "OrderDoc"
+                    }
+                  ]
+                }
+              ],
+              "recv": {
+                "label": "OrderCreatedEvent",
+                "model": "OrderCreatedEvent"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "invoiceStore",
+      "type": "class",
+      "title": "InvoiceStorage.java",
+      "tagline": {
+        "zh": "发票文件存储",
+        "en": "Invoice file storage"
+      },
+      "path": "src/main/java/com/demo/order/integration/InvoiceStorage.java",
+      "desc": {
+        "zh": "渲染电子发票 PDF 并经 OSS SDK 上传，返回签名访问 URL。",
+        "en": "Renders e-invoice PDFs and uploads them via the OSS SDK, returning a signed access URL."
+      },
+      "tags": [
+        "OSS",
+        "SDK",
+        {
+          "zh": "文件",
+          "en": "Files"
+        }
+      ],
+      "x": 3250,
+      "y": 440,
+      "w": 270,
+      "sections": [
+        {
+          "label": {
+            "zh": "方法 · 1",
+            "en": "Methods · 1"
+          },
+          "items": [
+            {
+              "kind": "method",
+              "name": "upload",
+              "sig": "+ upload(OrderCreatedEvent event) : String",
+              "desc": {
+                "zh": "按事件生成发票 PDF，putObject 到 demo-bucket/invoice/ 目录。",
+                "en": "Generates the invoice PDF from the event and putObjects to demo-bucket/invoice/."
+              },
+              "ret": {
+                "label": {
+                  "zh": "String · 签名 URL",
+                  "en": "String · signed URL"
+                }
+              },
+              "outs": [],
+              "tag": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "logback",
+      "type": "config",
+      "title": "logback-spring.xml",
+      "tagline": {
+        "zh": "配置片段 · LOGSTASH",
+        "en": "Config fragment · LOGSTASH"
+      },
+      "path": "src/main/resources/logback-spring.xml#LOGSTASH",
+      "desc": {
+        "zh": "LogstashTcpSocketAppender：日志编码为 JSON 后经 TCP 发往 Logstash。",
+        "en": "LogstashTcpSocketAppender: logs are encoded as JSON and shipped to Logstash over TCP."
+      },
+      "tags": [
+        "logback",
+        {
+          "zh": "日志采集",
+          "en": "Log shipping"
+        }
+      ],
+      "x": 1650,
+      "y": 1180,
+      "w": 270,
+      "sections": [
+        {
+          "label": {
+            "zh": "配置项 · 3",
+            "en": "Settings · 3"
+          },
+          "items": [
+            {
+              "kind": "kv",
+              "k": "destination",
+              "v": "logstash.demo.local:4560",
+              "desc": null,
+              "tag": null
+            },
+            {
+              "kind": "kv",
+              "k": "encoder",
+              "v": "LogstashEncoder",
+              "desc": null,
+              "tag": null
+            },
+            {
+              "kind": "kv",
+              "k": "includeCallerData",
+              "v": "false",
+              "desc": null,
+              "tag": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "logstash",
+      "type": "external",
+      "title": "Logstash",
+      "tagline": {
+        "zh": "日志管道 · enrichment",
+        "en": "Log pipeline · enrichment"
+      },
+      "path": "logstash://logstash.demo.local:5044",
+      "desc": {
+        "zh": "接收应用 JSON 日志流，补全字段后 bulk 写入 Elasticsearch。",
+        "en": "Receives the application JSON log stream, enriches fields and bulk-indexes into Elasticsearch."
+      },
+      "tags": [
+        "ELK",
+        {
+          "zh": "日志",
+          "en": "Logging"
+        }
+      ],
+      "x": 2050,
+      "y": 1180,
+      "w": 270,
+      "sections": [
+        {
+          "label": {
+            "zh": "管道 · 2",
+            "en": "Pipelines · 2"
+          },
+          "items": [
+            {
+              "kind": "kv",
+              "k": "input",
+              "v": "tcp · 4560 · JSON",
+              "desc": null,
+              "tag": null
+            },
+            {
+              "kind": "kv",
+              "k": "output",
+              "v": "elasticsearch · bulk",
+              "desc": null,
+              "tag": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "kibana",
+      "type": "external",
+      "title": "Kibana",
+      "tagline": {
+        "zh": "可视化 · 仪表盘",
+        "en": "Visualization · dashboards"
+      },
+      "path": "http://kibana.demo.local:5601",
+      "desc": {
+        "zh": "运营与研发查看订单审计日志仪表盘与错误率大盘。",
+        "en": "Operations and dev teams view order audit dashboards and error-rate boards."
+      },
+      "tags": [
+        "ELK",
+        {
+          "zh": "观测",
+          "en": "Observability"
+        }
+      ],
+      "x": 2900,
+      "y": 1180,
+      "w": 270,
+      "sections": [
+        {
+          "label": {
+            "zh": "视图 · 2",
+            "en": "Views · 2"
+          },
+          "items": [
+            {
+              "kind": "kv",
+              "k": "order-audit",
+              "v": {
+                "zh": "审计日志检索",
+                "en": "Audit log search"
+              },
+              "desc": null,
+              "tag": null
+            },
+            {
+              "kind": "kv",
+              "k": "error-rate",
+              "v": {
+                "zh": "错误率大盘",
+                "en": "Error-rate board"
+              },
+              "desc": null,
+              "tag": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "ymlRedis",
+      "type": "config",
+      "title": "application.yml",
+      "tagline": {
+        "zh": "配置片段 · spring.data.redis",
+        "en": "Config fragment · spring.data.redis"
+      },
+      "path": "src/main/resources/application.yml#spring.data.redis",
+      "desc": {
+        "zh": "Redis 连接与连接池配置（节选自 application.yml）。",
+        "en": "Redis connection and pool settings (excerpt from application.yml)."
+      },
+      "tags": [
+        {
+          "zh": "自定义配置",
+          "en": "Custom config"
+        },
+        "Redis"
+      ],
+      "x": 2030,
+      "y": 880,
+      "w": 270,
+      "sections": [
+        {
+          "label": {
+            "zh": "配置项 · 3",
+            "en": "Settings · 3"
+          },
+          "items": [
+            {
+              "kind": "kv",
+              "k": "spring.data.redis.host",
+              "v": "redis.demo.local",
+              "desc": null,
+              "tag": null
+            },
+            {
+              "kind": "kv",
+              "k": "spring.data.redis.port",
+              "v": "6379",
+              "desc": null,
+              "tag": null
+            },
+            {
+              "kind": "kv",
+              "k": "spring.data.redis.lettuce.pool.max-active",
+              "v": "16",
+              "desc": null,
+              "tag": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "notifyExchange",
+      "type": "mq",
+      "title": "RabbitMQ · notify-exchange",
+      "tagline": {
+        "zh": "通知交换机 · Direct",
+        "en": "Notification exchange · Direct"
+      },
+      "path": "amqp://mq.demo.local:5672/%2F",
+      "desc": {
+        "zh": "订单通知的 Direct 交换机：按路由键 order.created 分发到短信与邮件队列。",
+        "en": "Direct exchange for order notifications: routes by key order.created to the SMS and email queues."
+      },
+      "tags": [
+        "RabbitMQ",
+        {
+          "zh": "交换机",
+          "en": "Exchange"
+        },
+        "Direct"
+      ],
+      "x": 3250,
+      "y": 780,
+      "w": 270,
+      "sections": [
+        {
+          "label": "Routing Key · 1",
+          "items": [
+            {
+              "kind": "res",
+              "name": "order.created",
+              "tag": {
+                "zh": "rk · 绑定 2 队列",
+                "en": "rk · binds 2 queues"
+              },
+              "sig": "exchange=notify-exchange · type=direct · rk=order.created",
+              "ret": {
+                "label": "OrderCreatedEvent",
+                "model": "OrderCreatedEvent"
+              },
+              "desc": {
+                "zh": "订单创建通知：绑定 notify.sms 与 notify.email。",
+                "en": "Order-created notifications: binds notify.sms and notify.email."
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "smsQueue",
+      "type": "mq",
+      "title": "RabbitMQ · notify.sms",
+      "tagline": {
+        "zh": "短信通知队列",
+        "en": "SMS notification queue"
+      },
+      "path": "amqp://mq.demo.local:5672/notify.sms",
+      "desc": {
+        "zh": "短信通知队列：消费方渲染模板后调用短信网关。",
+        "en": "SMS notification queue: consumers render templates and call the SMS gateway."
+      },
+      "tags": [
+        "RabbitMQ",
+        {
+          "zh": "队列",
+          "en": "Queue"
+        }
+      ],
+      "x": 3660,
+      "y": 780,
+      "w": 270,
+      "sections": [
+        {
+          "label": "Queue · 1",
+          "items": [
+            {
+              "kind": "res",
+              "name": "notify.sms",
+              "tag": {
+                "zh": "Queue · 消费者 1",
+                "en": "Queue · 1 consumer"
+              },
+              "ret": {
+                "label": "OrderCreatedEvent",
+                "model": "OrderCreatedEvent"
+              },
+              "desc": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "emailQueue",
+      "type": "mq",
+      "title": "RabbitMQ · notify.email",
+      "tagline": {
+        "zh": "邮件通知队列",
+        "en": "Email notification queue"
+      },
+      "path": "amqp://mq.demo.local:5672/notify.email",
+      "desc": {
+        "zh": "邮件通知队列：消费方渲染 HTML 模板后调用邮件服务。",
+        "en": "Email notification queue: consumers render HTML templates and call the mail service."
+      },
+      "tags": [
+        "RabbitMQ",
+        {
+          "zh": "队列",
+          "en": "Queue"
+        }
+      ],
+      "x": 3660,
+      "y": 1100,
+      "w": 270,
+      "sections": [
+        {
+          "label": "Queue · 1",
+          "items": [
+            {
+              "kind": "res",
+              "name": "notify.email",
+              "tag": {
+                "zh": "Queue · 消费者 1",
+                "en": "Queue · 1 consumer"
+              },
+              "ret": {
+                "label": "OrderCreatedEvent",
+                "model": "OrderCreatedEvent"
+              },
+              "desc": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "smsNotifier",
+      "type": "class",
+      "title": "SmsNotifier.java",
+      "tagline": {
+        "zh": "短信通知",
+        "en": "SMS notifier"
+      },
+      "path": "src/main/java/com/demo/order/integration/notify/SmsNotifier.java",
+      "desc": {
+        "zh": "消费短信队列：渲染通知模板并调用短信网关，失败重回队列。",
+        "en": "Consumes the SMS queue: renders notification templates and calls the SMS gateway; failures requeue."
+      },
+      "tags": [
+        "@Component",
+        "@RabbitListener",
+        {
+          "zh": "通知",
+          "en": "Notification"
+        }
+      ],
+      "x": 4070,
+      "y": 780,
+      "w": 270,
+      "sections": [
+        {
+          "label": {
+            "zh": "方法 · 1",
+            "en": "Methods · 1"
+          },
+          "items": [
+            {
+              "kind": "method",
+              "name": "handle",
+              "sig": "+ handle(OrderCreatedEvent event) : void",
+              "tag": "@RabbitListener(queues = \"notify.sms\")",
+              "desc": {
+                "zh": "渲染短信模板并调用网关发送。",
+                "en": "Renders the SMS template and sends it via the gateway."
+              },
+              "recv": {
+                "label": "OrderCreatedEvent",
+                "model": "OrderCreatedEvent"
+              },
+              "ret": {
+                "label": "（无返回值）"
+              },
+              "outs": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "emailNotifier",
+      "type": "class",
+      "title": "EmailNotifier.java",
+      "tagline": {
+        "zh": "邮件通知",
+        "en": "Email notifier"
+      },
+      "path": "src/main/java/com/demo/order/integration/notify/EmailNotifier.java",
+      "desc": {
+        "zh": "消费邮件队列：渲染 HTML 模板并投递邮件。",
+        "en": "Consumes the email queue: renders HTML templates and delivers emails."
+      },
+      "tags": [
+        "@Component",
+        "@RabbitListener",
+        {
+          "zh": "通知",
+          "en": "Notification"
+        }
+      ],
+      "x": 4070,
+      "y": 1100,
+      "w": 270,
+      "sections": [
+        {
+          "label": {
+            "zh": "方法 · 1",
+            "en": "Methods · 1"
+          },
+          "items": [
+            {
+              "kind": "method",
+              "name": "send",
+              "sig": "+ send(OrderCreatedEvent event) : void",
+              "tag": "@RabbitListener(queues = \"notify.email\")",
+              "desc": {
+                "zh": "渲染 HTML 邮件并投递。",
+                "en": "Renders the HTML email and delivers it."
+              },
+              "recv": {
+                "label": "OrderCreatedEvent",
+                "model": "OrderCreatedEvent"
+              },
+              "ret": {
+                "label": "（无返回值）"
+              },
+              "outs": []
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "k": "call",
+      "from": [
+        "ctl",
+        "createOrder",
+        0
+      ],
+      "to": [
+        "svc",
+        "placeOrder"
+      ]
+    },
+    {
+      "k": "call",
+      "from": [
+        "ctl",
+        "getOrder",
+        0
+      ],
+      "to": [
+        "svc",
+        "findById"
+      ]
+    },
+    {
+      "k": "call",
+      "from": [
+        "ctl",
+        "searchOrders",
+        0
+      ],
+      "to": [
+        "svc",
+        "search"
+      ]
+    },
+    {
+      "k": "call",
+      "from": [
+        "impl",
+        "placeOrder",
+        0
+      ],
+      "to": [
+        "repo",
+        "save"
+      ]
+    },
+    {
+      "k": "call",
+      "from": [
+        "impl",
+        "placeOrder",
+        1
+      ],
+      "to": [
+        "payment",
+        "charge"
+      ]
+    },
+    {
+      "k": "call",
+      "from": [
+        "impl",
+        "placeOrder",
+        2
+      ],
+      "to": [
+        "wsHandler",
+        "push"
+      ]
+    },
+    {
+      "k": "call",
+      "from": [
+        "impl",
+        "findById",
+        0
+      ],
+      "to": [
+        "repo",
+        "findById"
+      ]
+    },
+    {
+      "k": "call",
+      "from": [
+        "impl",
+        "findById",
+        1
+      ],
+      "to": [
+        "converter",
+        "toVO"
+      ]
+    },
+    {
+      "k": "call",
+      "from": [
+        "impl",
+        "search",
+        0
+      ],
+      "to": [
+        "xml",
+        "selectByCondition"
+      ]
+    },
+    {
+      "k": "call",
+      "from": [
+        "impl",
+        "search",
+        1
+      ],
+      "to": [
+        "xml",
+        "countTodayOrders"
+      ]
+    },
+    {
+      "k": "rel",
+      "kind": "implements",
+      "fromNode": "impl",
+      "toNode": "svc"
+    },
+    {
+      "k": "rel",
+      "kind": "inject",
+      "fromNode": "repo",
+      "toNode": "impl"
+    },
+    {
+      "k": "rel",
+      "kind": "inject",
+      "fromNode": "payment",
+      "toNode": "impl"
+    },
+    {
+      "k": "rel",
+      "kind": "inject",
+      "fromNode": "wsHandler",
+      "toNode": "impl"
+    },
+    {
+      "k": "rel",
+      "kind": "config",
+      "fromNode": "ymlDs",
+      "toNode": "db"
+    },
+    {
+      "k": "rel",
+      "kind": "config",
+      "fromNode": "ymlPay",
+      "toNode": "payment"
+    },
+    {
+      "k": "rel",
+      "kind": "orm",
+      "fromNode": "repo",
+      "toNode": "db"
+    },
+    {
+      "k": "rel",
+      "kind": "bind",
+      "fromNode": "qmapper",
+      "toNode": "xml",
+      "label": {
+        "zh": "namespace 绑定",
+        "en": "namespace binding"
+      }
+    },
+    {
+      "k": "rel",
+      "kind": "sql",
+      "fromNode": "xml",
+      "toNode": "db",
+      "label": "selectByCondition",
+      "fromPortId": "p|xml|selectByCondition|sql|"
+    },
+    {
+      "k": "rel",
+      "kind": "sql",
+      "fromNode": "xml",
+      "toNode": "db",
+      "label": "countTodayOrders",
+      "fromPortId": "p|xml|countTodayOrders|sql|"
+    },
+    {
+      "k": "rel",
+      "kind": "http",
+      "fromNode": "client",
+      "toNode": "ctl",
+      "label": "HTTPS · REST API"
+    },
+    {
+      "k": "rel",
+      "kind": "http",
+      "fromNode": "admin",
+      "toNode": "ctl",
+      "label": {
+        "zh": "HTTPS · 管理接口",
+        "en": "HTTPS · admin API"
+      }
+    },
+    {
+      "k": "rel",
+      "kind": "http",
+      "fromNode": "payment",
+      "toNode": "paySvc",
+      "label": "HTTP · POST /v1/charge"
+    },
+    {
+      "k": "rel",
+      "kind": "ws",
+      "fromNode": "wsHandler",
+      "toNode": "wsStream",
+      "label": {
+        "zh": "WS 推流",
+        "en": "WS streaming"
+      }
+    },
+    {
+      "k": "rel",
+      "kind": "ws",
+      "fromNode": "wsStream",
+      "toNode": "client",
+      "label": {
+        "zh": "WS 订阅",
+        "en": "WS subscribe"
+      }
+    },
+    {
+      "k": "rel",
+      "kind": "aspect",
+      "fromNode": "aspect",
+      "toNode": "impl",
+      "label": {
+        "zh": "织入 · service 包",
+        "en": "Weave · service package"
+      }
+    },
+    {
+      "k": "rel",
+      "kind": "aspect",
+      "fromNode": "aspect",
+      "toNode": "repo",
+      "label": {
+        "zh": "织入 · save(..)",
+        "en": "Weave · save(..)"
+      }
+    },
+    {
+      "k": "rel",
+      "kind": "sdk",
+      "fromNode": "invoiceStore",
+      "toNode": "oss",
+      "label": "SDK · putObject"
+    },
+    {
+      "k": "rel",
+      "kind": "config",
+      "fromNode": "ymlRedis",
+      "toNode": "redis",
+      "label": "spring.data.redis"
+    },
+    {
+      "k": "rel",
+      "kind": "log",
+      "fromNode": "logback",
+      "toNode": "logstash",
+      "label": "TCP 4560 · JSON"
+    },
+    {
+      "k": "rel",
+      "kind": "search",
+      "fromNode": "logstash",
+      "label": "bulk · order-audit",
+      "to": [
+        "es",
+        "order-audit"
+      ]
+    },
+    {
+      "k": "rel",
+      "kind": "search",
+      "fromNode": "kibana",
+      "label": {
+        "zh": "查询 · 仪表盘",
+        "en": "Query · dashboards"
+      },
+      "to": [
+        "es",
+        "order-audit"
+      ]
+    },
+    {
+      "k": "call",
+      "from": [
+        "listener",
+        "onMessage",
+        0
+      ],
+      "to": [
+        "invoiceStore",
+        "upload"
+      ]
+    },
+    {
+      "k": "rel",
+      "kind": "cache",
+      "from": [
+        "impl",
+        "findById",
+        2
+      ],
+      "to": [
+        "redis",
+        "order:detail:{id}"
+      ],
+      "label": {
+        "zh": "读 · GET → 命中即返",
+        "en": "Read · GET → return on hit"
+      }
+    },
+    {
+      "k": "rel",
+      "kind": "cache",
+      "from": [
+        "impl",
+        "placeOrder",
+        3
+      ],
+      "to": [
+        "redis",
+        "stock:lock:{sku}"
+      ],
+      "label": {
+        "zh": "锁 · Redisson tryLock",
+        "en": "Lock · Redisson tryLock"
+      }
+    },
+    {
+      "k": "rel",
+      "kind": "mq",
+      "from": [
+        "impl",
+        "placeOrder",
+        4
+      ],
+      "to": [
+        "kafka",
+        "order-events"
+      ],
+      "label": {
+        "zh": "发布 · order-events",
+        "en": "Publish · order-events"
+      }
+    },
+    {
+      "k": "rel",
+      "kind": "mq",
+      "from": [
+        "kafka",
+        "order-events"
+      ],
+      "to": [
+        "listener",
+        "onMessage"
+      ],
+      "label": {
+        "zh": "订阅 · 消费组 order-svc",
+        "en": "Subscribe · group order-svc"
+      }
+    },
+    {
+      "k": "rel",
+      "kind": "search",
+      "from": [
+        "listener",
+        "onMessage",
+        2
+      ],
+      "to": [
+        "es",
+        "orders"
+      ],
+      "label": {
+        "zh": "索引 · orders",
+        "en": "Index · orders"
+      }
+    },
+    {
+      "k": "rel",
+      "kind": "mq",
+      "from": [
+        "listener",
+        "onMessage",
+        1
+      ],
+      "to": [
+        "notifyExchange",
+        "order.created"
+      ],
+      "label": {
+        "zh": "发布 · rk=order.created",
+        "en": "Publish · rk=order.created"
+      }
+    },
+    {
+      "k": "rel",
+      "kind": "bind",
+      "from": [
+        "notifyExchange",
+        "order.created"
+      ],
+      "to": [
+        "smsQueue",
+        "notify.sms"
+      ],
+      "label": {
+        "zh": "绑定 · rk=order.created",
+        "en": "Bind · rk=order.created"
+      }
+    },
+    {
+      "k": "rel",
+      "kind": "bind",
+      "from": [
+        "notifyExchange",
+        "order.created"
+      ],
+      "to": [
+        "emailQueue",
+        "notify.email"
+      ],
+      "label": {
+        "zh": "绑定 · rk=order.created",
+        "en": "Bind · rk=order.created"
+      }
+    },
+    {
+      "k": "rel",
+      "kind": "mq",
+      "from": [
+        "smsQueue",
+        "notify.sms"
+      ],
+      "to": [
+        "smsNotifier",
+        "handle"
+      ],
+      "label": {
+        "zh": "订阅 · notify.sms",
+        "en": "Subscribe · notify.sms"
+      }
+    },
+    {
+      "k": "rel",
+      "kind": "mq",
+      "from": [
+        "emailQueue",
+        "notify.email"
+      ],
+      "to": [
+        "emailNotifier",
+        "send"
+      ],
+      "label": {
+        "zh": "订阅 · notify.email",
+        "en": "Subscribe · notify.email"
+      }
+    },
+    {
+      "k": "call",
+      "from": [
+        "impl",
+        "findById",
+        3
+      ],
+      "to": [
+        "mpmapper",
+        "selectById"
+      ]
+    },
+    {
+      "k": "call",
+      "from": [
+        "impl",
+        "search",
+        2
+      ],
+      "to": [
+        "mpmapper",
+        "selectPage"
+      ]
+    },
+    {
+      "k": "rel",
+      "kind": "sql",
+      "fromNode": "mpmapper",
+      "toNode": "db",
+      "label": "selectById",
+      "fromPortId": "p|mpmapper|selectById|sql|"
+    },
+    {
+      "k": "rel",
+      "kind": "sql",
+      "fromNode": "mpmapper",
+      "toNode": "db",
+      "label": "selectPage",
+      "fromPortId": "p|mpmapper|selectPage|sql|"
+    }
+  ]
+}
