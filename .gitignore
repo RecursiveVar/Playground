@@ -1,0 +1,42 @@
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+.pytest_cache/
+
+# 编辑器 / IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# 环境与敏感凭据
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.crt
+*.p12
+*.pfx
+
+# 日志与临时文件
+*.log
+*.tmp
+*.bak
+
+# CodeGraph
+layout.user.json
+.zcode/
+.codegraph-tests/
+
+# VideoTool（本地输出视频、上传副本及便携 ffmpeg 二进制不入库）
+VideoTool/out/
+VideoTool/tools/
